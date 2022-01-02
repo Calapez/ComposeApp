@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -15,24 +14,20 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.findNavController
-import coil.compose.rememberImagePainter
 import com.example.composeapp.domain.model.Recipe
-import com.example.composeapp.presentation.components.RecipeCard
+import com.example.composeapp.presentation.components.*
+import com.example.composeapp.presentation.components.HeartButtonState.*
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -54,9 +49,18 @@ class RecipeListFragment : Fragment() {
 
     @Composable
     fun RecipesList() {
-        val query = viewModel.query.value
+        val state = remember { mutableStateOf(ACTIVE) }
 
-        Column(modifier = Modifier.padding(5.dp)) {
+        Column(
+            modifier = Modifier.padding(5.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            AnimatedHeartButton(
+                modifier = Modifier,
+                buttonState = state,
+                onToggle = { state.value = if(state.value == IDLE) ACTIVE else IDLE }
+            )
+
             Surface(
                 elevation = 8.dp,
                 modifier = Modifier.fillMaxWidth()) {
@@ -64,7 +68,7 @@ class RecipeListFragment : Fragment() {
                 Column {
                     Row(modifier = Modifier.fillMaxWidth()) {
                         TextField(
-                            value = query,
+                            value = viewModel.query.value,
                             onValueChange = { viewModel.onQueryChanged(it) },
                             label = { Text("Search") },
                             keyboardOptions = KeyboardOptions(
@@ -80,41 +84,32 @@ class RecipeListFragment : Fragment() {
                         )
                     }
 
-                    val chips = listOf(
-                        "Chicken",
-                        "Pie",
-                        "Lime",
-                        "Beef",
-                        "Taco",
-                        "Veggie",
-                        "Burger",
-                        "Potato",
-                        "Salad",
-                        "Pizza",
-                        "Kebab",
-                        "Pancake",
-                        "Chocolate"
-                    )
-
                     LazyRow(modifier = Modifier.padding(5.dp)) {
-                        items(chips) { item ->
-                            Button(
-                                content = { Text(item) },
-                                modifier = Modifier.padding(horizontal = 10.dp),
-                                onClick = { viewModel.onQueryChanged(item) },
-                                enabled = viewModel.query.value != item
+                        items(getAllFoodCategories()) { category ->
+                            FoodCategoryChip(
+                                category = category,
+                                isSelected = viewModel.query.value == category.value,
+                                onExecuteSearch = {
+                                    val text = when (viewModel.query.value) {
+                                        category.value -> ""
+                                        else -> category.value
+                                    }
+
+                                    viewModel.onQueryChanged(text)
+                                }
                             )
                         }
                     }
                 }
             }
 
-
-            Spacer(modifier = Modifier.height(10.dp))
+            val loading = viewModel.loading.value
+            if (loading) {
+                CircularIndeterminateProgressBar()
+            }
 
             val recipes = viewModel.recipes.value
-
-            LazyColumn(modifier = Modifier.padding(vertical = 5.dp)) {
+            LazyColumn {
                 items(recipes) { recipe ->
                     RecipeCard(recipe = recipe, { })
                 }

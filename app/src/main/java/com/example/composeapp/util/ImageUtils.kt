@@ -28,7 +28,6 @@ fun loadPicture(
             }
 
             override fun onLoadCleared(placeholder: Drawable?) {
-                TODO("Not yet implemented")
             }
 
         })
@@ -42,7 +41,6 @@ fun loadPicture(
             }
 
             override fun onLoadCleared(placeholder: Drawable?) {
-                TODO("Not yet implemented")
             }
 
         })
