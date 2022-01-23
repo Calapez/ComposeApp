@@ -11,6 +11,9 @@ import androidx.compose.ui.platform.LocalContext
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
+import com.example.composeapp.R
+
+const val DEFAULT_RECIPE_IMAGE = R.drawable.empty_plate
 
 @Composable
 fun loadPicture(

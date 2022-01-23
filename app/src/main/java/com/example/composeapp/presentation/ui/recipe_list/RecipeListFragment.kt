@@ -26,6 +26,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
+import com.example.composeapp.R
 import com.example.composeapp.domain.model.Recipe
 import com.example.composeapp.presentation.components.*
 import com.example.composeapp.presentation.components.HeartButtonState.*
@@ -117,14 +119,23 @@ class RecipeListFragment : Fragment() {
 
             val page = viewModel.page.value
 
-            //val recipes = viewModel.recipes.value
             LazyColumn {
-                itemsIndexed(recipes) { index, recipe ->
+                itemsIndexed(
+                    items = recipes,
+                    key = { _, recipe -> recipe.id ?: 0 }
+                ) { index, recipe ->
                     viewModel.onChangeRecipeScrollPosition(index)
                     if ((index + 1) >= (page * PAGE_SIZE) && !loading) {
                         viewModel.onTriggerEvent(NextPageEvent)
                     }
-                    RecipeCard(recipe = recipe, { })
+                    RecipeCard(
+                        recipe = recipe,
+                        onClick = {
+                            if (recipe.id != null) {
+                                val bundle = Bundle().also { it.putInt("recipeId", recipe.id) }
+                                findNavController().navigate(R.id.viewRecipe, bundle)
+                            }
+                        })
                 }
             }
         }
