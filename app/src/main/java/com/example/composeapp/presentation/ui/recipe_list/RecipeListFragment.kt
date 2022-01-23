@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -30,6 +29,7 @@ import androidx.fragment.app.viewModels
 import com.example.composeapp.domain.model.Recipe
 import com.example.composeapp.presentation.components.*
 import com.example.composeapp.presentation.components.HeartButtonState.*
+import com.example.composeapp.presentation.ui.recipe_list.RecipeListEvent.*
 import com.example.composeapp.util.MockRecipes
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -74,7 +74,9 @@ class RecipeListFragment : Fragment() {
                     Row(modifier = Modifier.fillMaxWidth()) {
                         TextField(
                             value = viewModel.query.value,
-                            onValueChange = { viewModel.onQueryChanged(it) },
+                            onValueChange = {
+                                viewModel.onQueryChanged(it)
+                            },
                             label = { Text("Search") },
                             keyboardOptions = KeyboardOptions(
                                 keyboardType = KeyboardType.Text,
@@ -119,8 +121,8 @@ class RecipeListFragment : Fragment() {
             LazyColumn {
                 itemsIndexed(recipes) { index, recipe ->
                     viewModel.onChangeRecipeScrollPosition(index)
-                    if ((index + 1) >= (page * viewModel.PageSize) && !loading) {
-                        viewModel.nextPage()
+                    if ((index + 1) >= (page * PAGE_SIZE) && !loading) {
+                        viewModel.onTriggerEvent(NextPageEvent)
                     }
                     RecipeCard(recipe = recipe, { })
                 }
