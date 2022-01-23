@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberImagePainter
 import com.example.composeapp.R
 import com.example.composeapp.domain.model.Recipe
+import com.example.composeapp.util.MockRecipes
 import com.example.composeapp.util.loadPicture
 
 const val DEFAULT_EMPTY_IMAGE = R.drawable.empty_plate
@@ -80,5 +81,10 @@ fun RecipeCard(
             }
         }
     }
+}
 
+@Preview
+@Composable
+fun RecipeCardPreview() {
+    RecipeCard(recipe = MockRecipes.mockRecipeList[0], { })
 }

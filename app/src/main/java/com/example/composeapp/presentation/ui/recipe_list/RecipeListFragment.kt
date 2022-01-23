@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -22,12 +23,14 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.composeapp.domain.model.Recipe
 import com.example.composeapp.presentation.components.*
 import com.example.composeapp.presentation.components.HeartButtonState.*
+import com.example.composeapp.util.MockRecipes
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -48,7 +51,9 @@ class RecipeListFragment : Fragment() {
     }
 
     @Composable
-    fun RecipesList() {
+    fun RecipesList(
+        recipes: List<Recipe> = viewModel.recipes.value
+    ) {
         val state = remember { mutableStateOf(ACTIVE) }
 
         Column(
@@ -108,9 +113,15 @@ class RecipeListFragment : Fragment() {
                 CircularIndeterminateProgressBar()
             }
 
-            val recipes = viewModel.recipes.value
+            val page = viewModel.page.value
+
+            //val recipes = viewModel.recipes.value
             LazyColumn {
-                items(recipes) { recipe ->
+                itemsIndexed(recipes) { index, recipe ->
+                    viewModel.onChangeRecipeScrollPosition(index)
+                    if ((index + 1) >= (page * viewModel.PageSize) && !loading) {
+                        viewModel.nextPage()
+                    }
                     RecipeCard(recipe = recipe, { })
                 }
             }
@@ -124,22 +135,10 @@ class RecipeListFragment : Fragment() {
             Recipe())
     }
 
-    /*
     @Preview
     @Composable
     fun RecipeListPreview() {
-        ComposeRecipeAppTheme {
-            RecipesList()
-        }
+        val state = remember { mutableStateOf(MockRecipes.mockRecipeList) }
+        RecipesList(state.value)
     }
-
-    @Preview
-    @Composable
-    fun RecipeCardPreview() {
-        ComposeRecipeAppTheme {
-            RecipeCard(Recipe())
-        }
-    }
-
-     */
 }
