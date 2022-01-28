@@ -4,9 +4,7 @@ import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.hilt.Assisted
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.example.composeapp.domain.model.Recipe
 import com.example.composeapp.presentation.ui.recipe_list.RecipeListEvent.*
 import com.example.composeapp.repository.IRecipeRepository
@@ -32,7 +30,7 @@ constructor(
 
     private var scrollPosition = 0
 
-    val recipes: MutableState<List<Recipe>> = mutableStateOf(listOf())
+    val recipes: MutableLiveData<List<Recipe>> = MutableLiveData(listOf())
     val query: MutableState<String> = mutableStateOf("")
     val loading: MutableState<Boolean> = mutableStateOf(false)
     val page: MutableState<Int> = mutableStateOf(1)
