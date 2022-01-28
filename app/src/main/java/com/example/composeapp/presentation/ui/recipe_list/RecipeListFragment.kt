@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.composeapp.databinding.FragmentRecipeListBinding
 import com.example.composeapp.presentation.ui.recipe_list.adapter.RecipeListAdapter
 import com.example.composeapp.presentation.ui.recipe_list.adapter.RecipeListInteraction
@@ -19,7 +20,7 @@ class RecipeListFragment : Fragment(), RecipeListInteraction{
 
     private lateinit var binding: FragmentRecipeListBinding
 
-    private var recipeListAdapter: RecipeListAdapter = RecipeListAdapter(this)
+    private lateinit var listAdapter: RecipeListAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,13 +34,19 @@ class RecipeListFragment : Fragment(), RecipeListInteraction{
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        listAdapter = RecipeListAdapter(this)
+        listAdapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy
+            .PREVENT_WHEN_EMPTY
+
         binding.recipeList.let { recycler ->
             recycler.layoutManager = LinearLayoutManager(context).also {
                 it.orientation = LinearLayoutManager.VERTICAL
             }
 
-            recycler.adapter = recipeListAdapter
+            recycler.adapter = listAdapter
         }
+
+        listAdapter.updateList(viewModel.recipes.value!!)
 
         setupObservers()
     }
@@ -51,7 +58,7 @@ class RecipeListFragment : Fragment(), RecipeListInteraction{
     private fun setupObservers() {
 
         viewModel.recipes.observe(viewLifecycleOwner) { recipes ->
-            recipeListAdapter.submitList(recipes)
+            listAdapter.updateList(recipes)
         }
     }
 }

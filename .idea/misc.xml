@@ -5,6 +5,8 @@
       <map>
         <entry key="../../../../layout/compose-model-1639169742347.xml" value="0.1858108108108108" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.20364583333333333" />
+        <entry key="app/src/main/res/layout/fragment_recipe_list.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/layout_recipe_list.xml" value="0.16802536231884058" />
       </map>
     </option>
   </component>
