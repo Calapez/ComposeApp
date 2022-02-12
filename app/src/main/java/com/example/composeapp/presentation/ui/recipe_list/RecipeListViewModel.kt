@@ -32,7 +32,7 @@ constructor(
 
     val recipes: MutableLiveData<List<Recipe>> = MutableLiveData(listOf())
     val query: MutableState<String> = mutableStateOf("")
-    val loading: MutableState<Boolean> = mutableStateOf(false)
+    val loading: MutableLiveData<Boolean> = MutableLiveData(false)
     val page: MutableState<Int> = mutableStateOf(1)
 
     init {

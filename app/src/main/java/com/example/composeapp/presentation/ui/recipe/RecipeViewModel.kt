@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.hilt.Assisted
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -29,8 +30,8 @@ constructor(
     @Assisted private val savedStateHandle: SavedStateHandle
 ): ViewModel() {
 
-    val recipe: MutableState<Recipe?> = mutableStateOf(null)
-    val loading: MutableState<Boolean> = mutableStateOf(false)
+    val recipe: MutableLiveData<Recipe?> = MutableLiveData(null)
+    val loading = MutableLiveData(false)
 
     init {
         savedStateHandle.get<Int>(STATE_KEY_RECIPE_ID)?.let { recipeId ->

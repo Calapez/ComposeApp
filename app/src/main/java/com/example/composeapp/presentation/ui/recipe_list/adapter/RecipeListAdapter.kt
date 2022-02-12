@@ -8,7 +8,9 @@ import com.example.composeapp.domain.model.Recipe
 
 
 interface RecipeListInteraction {
-    fun onClick(position: Int)
+    fun onClick(position: Int, recipe: Recipe)
+
+    fun onIndexReached(index: Int)
 }
 
 class RecipeListAdapter(
@@ -22,8 +24,10 @@ class RecipeListAdapter(
         return RecipeViewHolder(itemBinding, interaction)
     }
 
-    override fun onBindViewHolder(holder: RecipeViewHolder, position: Int) =
+    override fun onBindViewHolder(holder: RecipeViewHolder, position: Int) {
         holder.bind(recipeList[position], position)
+        interaction.onIndexReached(position)
+    }
 
     override fun getItemCount() = recipeList.size
 
